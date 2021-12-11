@@ -1,0 +1,23 @@
+[package]
+name = "aoc_2021"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[lib]
+name = "libaoc"
+test = false
+bench = false
+
+[[bin]]
+name = "day01"
+test = false
+bench = false
+
+[[bin]]
+name = "day02"
+test = false
+bench = false
