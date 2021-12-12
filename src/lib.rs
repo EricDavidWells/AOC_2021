@@ -4,7 +4,7 @@ pub mod libaoc {
     use std::fs;
     use std::str::FromStr;
 
-    pub fn log_vec<T: Display>(vec: Vec<T>)
+    pub fn log_vec<T: Display>(vec: &Vec<T>)
     {
         for val in vec
         {

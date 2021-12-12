@@ -1,5 +1,5 @@
 
-use libaoc::libaoc::*;
+use libaoc::libaoc;
 
 fn count_increases(inputs: &Vec<i32>) -> i32
 {
@@ -38,7 +38,7 @@ fn count_3sum_increases(inputs: &Vec<i32>) -> i32
 fn main()
 {
     let filename = "src/bin/day01/input.txt";
-    let inputs: Vec<i32> = parse_file::<i32>(&filename);
+    let inputs: Vec<i32> = libaoc::parse_file::<i32>(&filename);
 
     let count = count_increases(&inputs);
     println!("part 1: {}", count);
