@@ -1,35 +1,6 @@
 use libaoc::libaoc;
 use bitvec::prelude::*;
 
-fn convert_string_to_bitset(line: &String) -> BitVec::<Msb0>
-{
-    let mut ret = BitVec::<Msb0>::with_capacity(line.len());
-
-    for char in line.chars()
-    {
-        match char
-        {
-            '0' => ret.push(false),
-            '1' => ret.push(true),
-            _ => panic!("can only convert 0's or 1's to true/false")
-        }
-    }
-
-    ret
-}
-
-fn convert_strings_to_bitset(lines: &Vec<String>) -> Vec<BitVec::<Msb0>>
-{
-    let mut ret = Vec::<BitVec::<Msb0>>::new();
-
-    for line in lines.iter()
-    {
-        ret.push(convert_string_to_bitset(line));
-    }
-
-    ret
-}
-
 fn find_gamma_and_epsilon(bit_inputs: &Vec<BitVec::<Msb0>>) -> (BitVec::<Msb0>, BitVec::<Msb0>)
 {
     let mut gamma= BitVec::<Msb0>::with_capacity(bit_inputs.get(0).unwrap().len());
@@ -64,9 +35,6 @@ fn find_oxygen_rating(bit_inputs: &Vec<BitVec::<Msb0>>) -> BitVec::<Msb0>
     {
         let (gamma, epsilon) = find_gamma_and_epsilon(&bit_inputs_mut);
         bit_inputs_mut.retain(|x| x[i] == gamma[i]);
-
-        // println!("gamma: {}", gamma);
-        // log_bitvec(&bit_inputs_mut);
 
         if bit_inputs_mut.len() == 1 {break;}
     }
@@ -128,7 +96,7 @@ fn main()
     let filename = "src/bin/day03/input.txt";
 
     let line_inputs: Vec<String> = libaoc::parse_file::<String>(&filename);
-    let bit_inputs = convert_strings_to_bitset(&line_inputs);
+    let bit_inputs = libaoc::convert_strings_to_bitset(&line_inputs);
     let (gamma, epsilon) = find_gamma_and_epsilon(&bit_inputs);
     println!("gamma: {} ({}), epsilon: {} ({}), power consumption: {}",gamma, gamma.load_be::<u16>(), epsilon, epsilon.load_be::<u16>(), gamma.load_be::<u32>() * epsilon.load_be::<u32>());
 

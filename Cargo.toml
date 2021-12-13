@@ -22,3 +22,13 @@ bench = false
 name = "day02"
 test = false
 bench = false
+
+[[bin]]
+name = "day03"
+test = false
+bench = false
+
+[[bin]]
+name = "day04"
+test = false
+bench = false
