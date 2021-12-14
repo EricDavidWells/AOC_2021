@@ -34,8 +34,7 @@ pub mod libaoc {
 
         ret
     }
-
-
+    
     pub fn convert_string_to_bitset(line: &String) -> BitVec::<Msb0>
     {
         let mut ret = BitVec::<Msb0>::with_capacity(line.len());
