@@ -157,8 +157,8 @@ fn log_array(arr: &Array2<u16>)
 fn main()
 {
 
-    let filename = "src/bin/day05/input.txt";
-    // let filename = "src/bin/day05/example_input.txt";
+    // let filename = "src/bin/day05/input.txt";
+    let filename = "src/bin/day05/example_input.txt";
     let (mut pipes, mut diagram) = parse_input(filename);
 
     add_horizontal_pipes(& pipes, &mut diagram);

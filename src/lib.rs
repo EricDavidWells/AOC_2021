@@ -7,10 +7,12 @@ pub mod libaoc {
 
     pub fn log_vec<T: Display>(vec: &Vec<T>)
     {
+        let mut msg = String::new();
         for val in vec
         {
-            println!("{}", val);
+            msg.push_str(val.to_string().as_str());
         }
+        println!("{}", msg);
     }
 
     pub fn parse_str<T>(string: &str) -> T

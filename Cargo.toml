@@ -39,3 +39,8 @@ bench = false
 name = "day05"
 test = false
 bench = false
+
+[[bin]]
+name = "day06"
+test = false
+bench = false
