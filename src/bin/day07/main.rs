@@ -73,31 +73,6 @@ fn organize_crabs_2(crabs: &Vec<u16>) -> u64
     min_fuel
 }
 
-// fn organize_crabs_w_binary_search(crabs: &Vec<u16>) -> u64
-// {
-//     let mut min_fuel = u64::MAX;
-//     let max_pos = *crabs.iter().max().unwrap();
-//     let min_pos = *crabs.iter().min().unwrap();
-//     let mean_pos = crabs.iter().fold(0, |acc, x| acc + *x as u64) / (crabs.len() as u64);
-//
-//     let possible_positions = vec!(0, max_pos);
-//
-//     // let btree = std::collections::BTreeSet::from_iter(possible_positions);
-//
-//     let comparator = |pos: &u16| -> std::cmp::Ordering {
-//
-//         let fuel = crabs.iter().fold(0, |acc: u64, x: &u16| acc + ((*x as i16 - *pos as i16).abs() as u64));
-//         // let prev_min_fuel = min_fuel;
-//         min_fuel = min_fuel.min(fuel);
-//         fuel.cmp(&(0 as u64))
-//     };
-//
-//     let val = possible_positions.binary_search_by(comparator);
-//
-//     println!("asdf");
-//     min_fuel
-// }
-
 fn main()
 {
     let filename = "src/bin/day07/input.txt";
