@@ -72,12 +72,6 @@ fn increase_day_smart(fishes: &mut Vec<u8>, num: u32) -> u64
 }
 
 
-fn neg_wrap_mod<T>(mut val: T, modu: T) -> T
-where T: Copy + std::ops::Rem<Output = T> + std::ops::Add<Output = T>
-{
-    (((val) % modu) + modu) % modu
-}
-
 fn main()
 {
     let filename = "src/bin/day06/input.txt";

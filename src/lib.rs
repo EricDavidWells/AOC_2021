@@ -66,6 +66,12 @@ pub mod libaoc {
         ret
     }
 
+    fn neg_wrap_mod<T>(mut val: T, modu: T) -> T
+        where T: Copy + std::ops::Rem<Output = T> + std::ops::Add<Output = T>
+    {
+        (((val) % modu) + modu) % modu
+    }
+
 }
 
 // mod libaoc;
