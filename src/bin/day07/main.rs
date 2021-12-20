@@ -1,7 +1,6 @@
 use regex::Regex;
 use std::fs;
 use std::time::{Duration, Instant};
-// use chrono;
 
 fn parse_input(filename: &str) -> Vec<u16>
 {
