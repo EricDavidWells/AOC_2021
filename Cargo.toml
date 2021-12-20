@@ -15,6 +15,7 @@ bitvec = "0.20"
 ndarray = "0.15.4"
 regex = "1.5.4"
 #chrono = "0.4.19"
+bimap = "0.6.1"
 
 [lib]
 name = "libaoc"
