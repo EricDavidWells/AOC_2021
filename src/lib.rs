@@ -4,6 +4,7 @@ pub mod libaoc {
     use std::fs;
     use std::str::FromStr;
     use bitvec::prelude::*;
+    use ndarray::{Array2, ArrayView, Axis};
 
     pub fn log_vec<T: Display>(vec: &Vec<T>)
     {
@@ -70,6 +71,23 @@ pub mod libaoc {
         where T: Copy + std::ops::Rem<Output = T> + std::ops::Add<Output = T>
     {
         (((val) % modu) + modu) % modu
+    }
+
+    pub fn log_array<T>(arr: &Array2<T>)
+        where T: Display
+    {
+        for row in arr.rows()
+        {
+            let mut msg: String = String::new();
+
+            for val in row
+            {
+                msg.push_str(&val.clone().to_string());
+
+                msg.push(',');
+            }
+            println!("{}", msg);
+        }
     }
 
 }
