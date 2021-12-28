@@ -5,6 +5,7 @@ pub mod libaoc {
     use std::str::FromStr;
     use bitvec::prelude::*;
     use ndarray::{Array2, ArrayView, Axis};
+    // extern crate num;
 
     pub fn log_vec<T: Display>(vec: &Vec<T>)
     {
@@ -88,6 +89,30 @@ pub mod libaoc {
             }
             println!("{}", msg);
         }
+    }
+
+    pub fn find_n_max<T>(vec: Vec<T>, n: usize) -> Vec<T>
+        where T: std::clone::Clone + std::cmp::PartialOrd  + std::cmp::Ord + num::NumCast
+    {
+        let mut ret: Vec<T> = Vec::new();
+        for _ in 0..n{ret.push(num::cast(0).unwrap());}
+
+        if vec.len() < n
+        {
+            panic!("vector size too small");
+        }
+
+        for val in vec
+        {
+            if val > ret[0]
+            {
+                ret.remove(0);
+                ret.push(val);
+                ret.sort();
+            }
+        }
+
+        ret
     }
 
 }

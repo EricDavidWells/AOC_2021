@@ -16,6 +16,7 @@ ndarray = "0.15.4"
 regex = "1.5.4"
 #chrono = "0.4.19"
 bimap = "0.6.1"
+num = "0.4.0"
 
 [lib]
 name = "libaoc"
