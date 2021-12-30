@@ -52,3 +52,28 @@ bench = false
 name = "day06"
 test = false
 bench = false
+
+[[bin]]
+name = "day07"
+test = false
+bench = false
+
+[[bin]]
+name = "day08"
+test = false
+bench = false
+
+[[bin]]
+name = "day09"
+test = false
+bench = false
+
+[[bin]]
+name = "day10"
+test = false
+bench = false
+
+#[[bin]]
+#name = "day11"
+#test = false
+#bench = false
