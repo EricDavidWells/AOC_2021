@@ -5,7 +5,6 @@ use ndarray::{Array2, ArrayView, Axis};
 fn parse_input(filename: &str) -> Array2<u8>
 {
 
-
     let lines = libaoc::libaoc::parse_file::<String>(filename);
 
     let mut ret: Array2<u8> = Array2::zeros((lines.len(), lines[0].len()));
@@ -145,7 +144,7 @@ fn main()
 
     println!("risk factor: {}", sum);
 
-    let mut bmap: Array2<bool> = Array2::from_elem((hmap.shape()[0], hmap.shape()[1]), false);
+    let mut bmap: Array2<bool> = Array2::from_elem(hmap.dim(), false);
 
     let vals = count_basins(&hmap, &mut bmap, &inds);
     let top3 = libaoc::libaoc::find_n_max(vals, 3);

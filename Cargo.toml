@@ -14,9 +14,9 @@ opt-level = 3
 bitvec = "0.20"
 ndarray = "0.15.4"
 regex = "1.5.4"
-#chrono = "0.4.19"
 bimap = "0.6.1"
 num = "0.4.0"
+petgraph = "0.6.0"
 
 [lib]
 name = "libaoc"
@@ -73,7 +73,17 @@ name = "day10"
 test = false
 bench = false
 
-#[[bin]]
-#name = "day11"
-#test = false
-#bench = false
+[[bin]]
+name = "day11"
+test = false
+bench = false
+
+[[bin]]
+name = "day12"
+test = false
+bench = false
+
+[[bin]]
+name = "day13"
+test = false
+bench = false

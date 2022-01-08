@@ -1,6 +1,4 @@
 use std::time::{Duration, Instant};
-use bimap::BiMap;
-
 
 fn parse_input(filename: &str) -> Vec<Vec<char>>
 {
