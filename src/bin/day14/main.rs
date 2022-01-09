@@ -32,31 +32,56 @@ fn parse_input(filename: &str) -> (Vec<char>, HashMap<Vec<char>, char>)
     (template, insertions)
 }
 
-fn step(polymer: &Vec<char>, insertions: &HashMap<Vec<char>, char>) -> Vec<char>
-{
-    let mut polycopy: Vec<char> = Vec::new();
-
-    polycopy.push(*polymer.first().unwrap());
-
-    for i in 1..polymer.len()
-    {
-        let mut pair: Vec<char> = vec![polymer[i-1], polymer[i]];
-        if insertions.contains_key(&pair)
-        {
-            let new_val = insertions.get(&pair).unwrap().clone();
-            pair.remove(0);
-            pair.insert(0, new_val);
-            polycopy.append(&mut pair)
-        }
-        else
-        {
-            polycopy.push(pair[1]);
-        }
-    }
-
-    polycopy
-}
-
+// fn step(polymer: &Vec<char>, insertions: &HashMap<Vec<char>, char>) -> Vec<char>
+// {
+//     let mut polycopy: Vec<char> = Vec::new();
+//
+//     polycopy.push(*polymer.first().unwrap());
+//
+//     for i in 1..polymer.len()
+//     {
+//         let mut pair: Vec<char> = vec![polymer[i-1], polymer[i]];
+//         if insertions.contains_key(&pair)
+//         {
+//             let new_val = insertions.get(&pair).unwrap().clone();
+//             pair.remove(0);
+//             pair.insert(0, new_val);
+//             polycopy.append(&mut pair)
+//         }
+//         else
+//         {
+//             polycopy.push(pair[1]);
+//         }
+//     }
+//
+//     polycopy
+// }
+//
+// fn count_points(polymer: &Vec<char>) -> usize
+// {
+//     let mut counter: HashMap<char, usize> = HashMap::new();
+//
+//     for val in polymer
+//     {
+//         if counter.contains_key(val)
+//         {
+//             let count = *counter.get(val).unwrap();
+//             counter.insert(*val, count + 1);
+//         }
+//         else{ counter.insert(*val, 1);}
+//     }
+//
+//     let mut max_count: usize = 0;
+//     let mut min_count: usize = usize::MAX;
+//
+//     for (val, count) in counter
+//     {
+//         max_count = std::cmp::max(max_count, count);
+//         min_count = std::cmp::min(min_count, count);
+//     }
+//
+//     max_count - min_count
+// }
 
 fn step_smart(polymer_map: &mut HashMap<Vec<char>, usize>, count_map: &mut HashMap<char, usize>, insertions: &HashMap<Vec<char>, char>)
 {
@@ -87,32 +112,6 @@ fn step_smart(polymer_map: &mut HashMap<Vec<char>, usize>, count_map: &mut HashM
 
 }
 
-fn count_points(polymer: &Vec<char>) -> usize
-{
-    let mut counter: HashMap<char, usize> = HashMap::new();
-
-    for val in polymer
-    {
-        if counter.contains_key(val)
-        {
-            let count = *counter.get(val).unwrap();
-            counter.insert(*val, count + 1);
-        }
-        else{ counter.insert(*val, 1);}
-    }
-
-    let mut max_count: usize = 0;
-    let mut min_count: usize = usize::MAX;
-
-    for (val, count) in counter
-    {
-        max_count = std::cmp::max(max_count, count);
-        min_count = std::cmp::min(min_count, count);
-    }
-
-    max_count - min_count
-}
-
 fn count_points_smart(count_map: &HashMap<char, usize>) -> usize
 {
     let mut max_count: usize = 0;
@@ -136,7 +135,6 @@ fn main()
     // let filename = "src/bin/day14/example_input.txt";
 
     let (template, insertions) = parse_input(filename);
-    // let mut polymer = LinkedList::from_iter(template.iter());
 
     let mut polymer_map: HashMap<Vec<char>, usize> = HashMap::new();
     let mut count_map: HashMap<char, usize> = HashMap::new();
@@ -175,31 +173,13 @@ fn main()
     {
         step_smart(&mut polymer_map, &mut count_map, &insertions);
     }
-    println!("points: {}", count_points_smart(&count_map));
+    println!("points after 10: {}", count_points_smart(&count_map));
 
     for _ in 0..30
     {
         step_smart(&mut polymer_map, &mut count_map, &insertions);
     }
-    println!("points: {}", count_points_smart(&count_map));
-
-
-    // let mut polymer: Vec<char> = template.clone();
-    // for _ in 0..10
-    // {
-    //     polymer = step(&polymer, &insertions);
-    //     println!("polymer length: {}", polymer.len());
-    // }
-    //
-    // println!("points: {}", count_points(&polymer));
-    //
-    // for _ in 0..30
-    // {
-    //     polymer = step(&polymer, &insertions);
-    //     println!("polymer length: {}", polymer.len());
-    // }
-
-    // println!("points: {}", count_points(&polymer));
+    println!("points after 40: {}", count_points_smart(&count_map));
 
     let end = Instant::now();
     println!("Took: {:?}", end.duration_since(start));
