@@ -58,8 +58,32 @@ fn step(polymer: &Vec<char>, insertions: &HashMap<Vec<char>, char>) -> Vec<char>
 }
 
 
-fn step_smart(polymer_map: HashMap<Vec<char>, usize>, insertions: &HashMap<Vec<char>, char>) -> Vec<char>
+fn step_smart(polymer_map: &mut HashMap<Vec<char>, usize>, count_map: &mut HashMap<char, usize>, insertions: &HashMap<Vec<char>, char>)
 {
+
+    for (polymer, count) in polymer_map.clone().iter_mut()
+    {
+        // for _ in 0..*count
+        // {
+        let char1 = polymer[0];
+        let char2 = polymer[1];
+        let new_char = *insertions.get(polymer).unwrap();
+
+        *polymer_map.get_mut(&vec![char1, char2]).unwrap() -= *count;
+        *polymer_map.get_mut(&vec![char1, new_char]).unwrap() += *count;
+        *polymer_map.get_mut(&vec![new_char, char2]).unwrap() += *count;
+
+        if count_map.contains_key(&new_char)
+        {
+            *count_map.get_mut(&new_char).unwrap() += *count;
+        }
+        else
+        {
+            count_map.insert(new_char, *count);
+        }
+        // }
+        // *count_map.get_mut(&new_char).unwrap() += 1;
+    }
 
 }
 
@@ -89,6 +113,21 @@ fn count_points(polymer: &Vec<char>) -> usize
     max_count - min_count
 }
 
+fn count_points_smart(count_map: &HashMap<char, usize>) -> usize
+{
+    let mut max_count: usize = 0;
+    let mut min_count: usize = usize::MAX;
+
+    for (_, count) in count_map
+    {
+        max_count = std::cmp::max(max_count, *count);
+        min_count = std::cmp::min(min_count, *count);
+    }
+
+    max_count - min_count
+
+}
+
 fn main()
 {
     let start = Instant::now();
@@ -99,22 +138,68 @@ fn main()
     let (template, insertions) = parse_input(filename);
     // let mut polymer = LinkedList::from_iter(template.iter());
 
-    let mut polymer: Vec<char> = template.clone();
-    for _ in 0..10
+    let mut polymer_map: HashMap<Vec<char>, usize> = HashMap::new();
+    let mut count_map: HashMap<char, usize> = HashMap::new();
+
+    for val in template.clone()
     {
-        polymer = step(&polymer, &insertions);
-        println!("polymer length: {}", polymer.len());
+        if count_map.contains_key(&val)
+        {
+            *count_map.get_mut(&val).unwrap() += 1;
+        }
+        else
+        {
+            count_map.insert(val, 1);
+        }
     }
 
-    println!("points: {}", count_points(&polymer));
+    for (polymer, char) in insertions.clone()
+    {
+        polymer_map.insert(polymer, 0);
+    }
+
+    for i in 1..template.len()
+    {
+        let val: Vec<char> = vec![template[i-1], template[i]];
+        if polymer_map.contains_key(&val)
+        {
+            *polymer_map.get_mut(&val).unwrap() += 1;
+        }
+        else
+        {
+            polymer_map.insert(val, 1);
+        }
+    }
+
+    for _ in 0..10
+    {
+        step_smart(&mut polymer_map, &mut count_map, &insertions);
+    }
+    println!("points: {}", count_points_smart(&count_map));
 
     for _ in 0..30
     {
-        polymer = step(&polymer, &insertions);
-        println!("polymer length: {}", polymer.len());
+        step_smart(&mut polymer_map, &mut count_map, &insertions);
     }
+    println!("points: {}", count_points_smart(&count_map));
 
-    println!("points: {}", count_points(&polymer));
+
+    // let mut polymer: Vec<char> = template.clone();
+    // for _ in 0..10
+    // {
+    //     polymer = step(&polymer, &insertions);
+    //     println!("polymer length: {}", polymer.len());
+    // }
+    //
+    // println!("points: {}", count_points(&polymer));
+    //
+    // for _ in 0..30
+    // {
+    //     polymer = step(&polymer, &insertions);
+    //     println!("polymer length: {}", polymer.len());
+    // }
+
+    // println!("points: {}", count_points(&polymer));
 
     let end = Instant::now();
     println!("Took: {:?}", end.duration_since(start));
