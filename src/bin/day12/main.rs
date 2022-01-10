@@ -1,7 +1,6 @@
 use std::time::{Duration, Instant};
 use regex::Regex;
 use petgraph::{Graph, Undirected};
-use petgraph::algo::dijkstra;
 use petgraph::prelude::*;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};

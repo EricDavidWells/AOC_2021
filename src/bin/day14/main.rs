@@ -1,8 +1,6 @@
 use std::time::{Duration, Instant};
 use std::fs;
-use std::collections::{HashMap, LinkedList};
-use std::collections::linked_list;
-use std::hash::Hash;
+use std::collections::{HashMap};
 
 use regex::Regex;
 
