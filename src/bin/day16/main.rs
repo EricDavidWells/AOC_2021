@@ -15,17 +15,14 @@ fn prod(x1: u64, x2: u64) -> u64
 {
     x1*x2
 }
-
 fn min_(x1: u64, x2: u64) -> u64
 {
     min(x1, x2)
 }
-
 fn max_(x1: u64, x2: u64) -> u64
 {
     max(x1, x2)
 }
-
 fn gt(x1: u64, x2: u64) -> u64
 {
     if x1 > x2
@@ -34,7 +31,6 @@ fn gt(x1: u64, x2: u64) -> u64
     }
     return 0
 }
-
 fn lt(x1: u64, x2: u64) -> u64
 {
     if x1 < x2
@@ -43,7 +39,6 @@ fn lt(x1: u64, x2: u64) -> u64
     }
     return 0
 }
-
 fn eq(x1: u64, x2: u64) -> u64
 {
     if x1 == x2
@@ -118,11 +113,6 @@ fn boolvec_to_int(mut bvec: &Vec<bool>) -> u64
     ret
 }
 
-fn has_leading_zero(bvec: &Vec<bool>) -> bool
-{
-    *bvec.get(0).unwrap() == false
-}
-
 fn vec_from_iter(it: &mut Peekable<IterMut<bool>>, n: usize) -> Vec<bool>
 {
     let mut ret: Vec<bool> = Vec::new();
@@ -135,7 +125,7 @@ fn vec_from_iter(it: &mut Peekable<IterMut<bool>>, n: usize) -> Vec<bool>
     ret
 }
 
-fn parse_packets_2(msg_it: &mut Peekable<IterMut<bool>>, bit_count_global: &mut usize, sum: &mut u64) -> u64
+fn parse_packets(msg_it: &mut Peekable<IterMut<bool>>, bit_count_global: &mut usize, sum: &mut u64) -> u64
 {
     let mut ops: Vec<fn(u64, u64)->u64> = Vec::new();
     ops.push(add);
@@ -189,17 +179,17 @@ fn parse_packets_2(msg_it: &mut Peekable<IterMut<bool>>, bit_count_global: &mut 
                 let mut val: u64 = 0;
                 for _ in 0..num_subpackets
                 {
-                    val = parse_packets_2(msg_it, bit_count_global, sum);
+                    val = parse_packets(msg_it, bit_count_global, sum);
                     vals.push(val);
                 }
             } else {
                 let subpacket_tot_len = boolvec_to_int(&mut vec_from_iter(msg_it, 15)) as usize;
                 *bit_count_global += 15;
 
-                let mut wtf: usize = *bit_count_global;
-                while *bit_count_global - wtf != subpacket_tot_len
+                let mut bit_count_start: usize = *bit_count_global;
+                while *bit_count_global - bit_count_start != subpacket_tot_len
                 {
-                    let val = parse_packets_2(msg_it, bit_count_global, sum);
+                    let val = parse_packets(msg_it, bit_count_global, sum);
                     vals.push(val);
                 }
             }
@@ -207,100 +197,12 @@ fn parse_packets_2(msg_it: &mut Peekable<IterMut<bool>>, bit_count_global: &mut 
             ret = *vals.get(0).unwrap();
             for i in (1..vals.len())
             {
-                let fn_ = ops.get(type_id as usize).unwrap()(0, 1);
                 ret = ops.get(type_id as usize).unwrap()(ret, *vals.get(i).unwrap());
             }
         }
     }
 
     ret
-}
-
-
-fn parse_packets(msg_it: &mut Peekable<IterMut<bool>>, max_len: Option<usize>, one_packet: Option<bool>, sum: &mut u64, bit_count_global: &mut usize)
-{
-    println!("sum: {}", sum);
-    loop
-    {
-
-        let mut bit_count: usize = 0;
-
-        // handle base case
-        if !msg_it.peek().is_some()
-        {
-            return;
-        }
-
-        let version = boolvec_to_int(&mut vec_from_iter(msg_it, 3));
-        *sum += version as u64;
-        let type_id = boolvec_to_int(&mut vec_from_iter(msg_it, 3));
-        *bit_count_global += 6;
-
-        match type_id
-        {
-            4 => {
-                // handle literal
-                let mut literal: Vec<bool> = Vec::new();
-
-                while *msg_it.next().unwrap() == true
-                {
-                    literal.append(&mut vec_from_iter(msg_it, 4));
-                    *bit_count_global += 5;
-                }
-                literal.append(&mut vec_from_iter(msg_it, 4));
-                *bit_count_global += 5;
-
-                let val = boolvec_to_int(&literal);
-                println!("val: {}", val);
-            },
-            _ => {
-                *bit_count_global += 1;
-                if *msg_it.next().unwrap()
-                {
-                    bit_count += 1;
-                    let num_subpackets = boolvec_to_int(&mut vec_from_iter(msg_it, 11));
-                    *bit_count_global += 11;
-
-                    for _ in 0..num_subpackets
-                    {
-                        parse_packets(msg_it, None, Some(true), sum, bit_count_global);
-                    }
-                    println!("sum: {}", sum);
-                    return;
-                }
-                else
-                {
-                    let subpacket_tot_len = boolvec_to_int(&mut vec_from_iter(msg_it, 15)) as usize;
-                    *bit_count_global += 15;
-
-                    let mut wtf: usize = 0;
-                    while wtf != subpacket_tot_len
-                    {
-                        parse_packets(msg_it, Some(subpacket_tot_len), None, sum, &mut wtf);
-                        *bit_count_global += wtf;
-                    }
-                    println!("sum: {}", sum);
-                    return;
-                }
-            }
-        }
-
-        *bit_count_global += bit_count as usize;
-
-        // operator with max subpacket length
-        if max_len.is_some() && *bit_count_global == max_len.unwrap()
-        {
-            return;
-        }
-
-        // only one packet
-        if one_packet.is_some()
-        {
-            return;
-        }
-
-        return;
-    }
 }
 
 fn main()
@@ -315,8 +217,7 @@ fn main()
     let mut sum: u64 = 0;
     let mut bit_count_global: usize = 0;
 
-    // parse_packets(&mut msg_it, None, Some(true), &mut sum, &mut bit_count_global);
-    let val = parse_packets_2(&mut msg_it, &mut bit_count_global, &mut sum);
+    let val = parse_packets(&mut msg_it, &mut bit_count_global, &mut sum);
     println!("sum {}", sum);
     println!("val {}", val);
     let end = Instant::now();
