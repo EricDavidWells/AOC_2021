@@ -1,7 +1,6 @@
 use std::time::{Duration, Instant};
 use std::fs;
 use std::collections::{HashMap};
-use std::ops::Index;
 
 use regex::Regex;
 use petgraph::{Graph, Undirected};
