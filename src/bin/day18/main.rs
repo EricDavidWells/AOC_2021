@@ -185,9 +185,9 @@ fn add_all_pairs(pairs: &Vec<String>) -> String
     {
         // println!("preadd : {}", ret);
         ret = add_pair(&ret, pair);
-        println!("postadd: {}", ret);
+        // println!("postadd: {}", ret);
         reduce_pair(&mut ret);
-        println!("ret: {}", ret);
+        // println!("ret: {}", ret);
     }
 
     ret
@@ -234,8 +234,8 @@ fn find_max_magnitude_twosum(pairs: &Vec<String>) -> u64
     {
        for j in 1..pairs.len()
        {
-           let p1 = pairs.get(i).unwrap().clone();
-           let p2 = pairs.get(j).unwrap().clone();
+           let p1 = pairs.get(i).unwrap();
+           let p2 = pairs.get(j).unwrap();
 
            let mut pcomb1 = add_pair(&p1, &p2);
            let mut pcomb2 = add_pair(&p2, &p1);
@@ -267,8 +267,8 @@ fn main()
     let magnitude = get_magnitude(&result);
     println!("magnitude: {}", magnitude);
 
-    let magnitude_2 = find_max_magnitude_twosum(&pairs);
-    println!("magnitude: {}", magnitude_2);
+    // let magnitude_2 = find_max_magnitude_twosum(&pairs);
+    // println!("magnitude: {}", magnitude_2);
 
     println!("Took: {:?}", Instant::now().duration_since(start));
 }
