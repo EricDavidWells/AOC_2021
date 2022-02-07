@@ -19,97 +19,9 @@ where T: Copy + std::ops::Mul<Output = T> + std::ops::Sub<Output = T>
 #[derive(Default, Clone)]
 struct Scanner
 {
-    axis: [i8; 3],
-    axis_neg: [i8; 3],
     beacons_rel: Vec<[i64; 3]>,
     beacons_abs: Option<Vec<[i64; 3]>>,
     scanner_abs_pos: Option<[i64; 3]>
-}
-
-fn is_z_neg(inds: [i8; 3], negs: [i8; 3]) -> bool
-{
-    let mut ret: bool = false;
-
-    let mut x: Vec<i8> = vec![0; 3];
-    let mut y: Vec<i8> = vec![0; 3];
-    let mut z: Vec<i8> = vec![0; 3];
-
-    let xind = inds.iter().position(|&x| x == 0).unwrap() as usize;
-    x[xind] = 1 * negs[xind];
-
-    let yind = inds.iter().position(|&x| x == 1).unwrap() as usize;
-    y[yind] = 1 * negs[yind];
-
-    let wtf: Vec<i8> = Vec::from(x);
-    let wtf2: Vec<i8> = Vec::from(y);
-
-    let z: Vec<i8> = cross_prod(&wtf, &wtf2);
-
-    if z.contains(&-1) {ret = true}
-
-    ret
-}
-
-fn ind_map_to_vecs(inds: [i8; 3], negs: [i8; 3]) -> (Vec<i8>, Vec<i8>, Vec<i8>)
-{
-    let mut x: Vec<i8> = vec![0; 3];
-    let mut y: Vec<i8> = vec![0; 3];
-    let mut z: Vec<i8> = vec![0; 3];
-
-    let xind = inds.iter().position(|&x| x == 0).unwrap() as usize;
-    x[xind] = 1 * negs[xind];
-
-    let yind = inds.iter().position(|&x| x == 1).unwrap() as usize;
-    y[yind] = 1 * negs[yind];
-
-    let zind = inds.iter().position(|&x| x == 2).unwrap() as usize;
-    z[zind] = 1 * negs[zind];
-
-    (x, y, z)
-}
-
-fn get_all_configs() -> (Vec<[i8; 3]>, Vec<[i8; 3]>)
-{
-
-    let mut ret_comb: Vec<[i8; 3]> = Vec::new();
-    let mut ret_neg: Vec<[i8; 3]> = Vec::new();
-
-    for i in 0..3
-    {
-        let mut comb: [i8; 3] = [0, 0, 0];
-        let mut neg: [i8; 3] = [0, 0, 0];
-
-        for i_n in [-1, 1]
-        {
-            comb[i] = 0;    // place x
-            neg[i] = i_n;
-
-            for j in 0..3
-            {
-                if j == i {continue;}
-
-                for j_n in [-1, 1]
-                {
-                    comb[j] = 1;    // place y
-                    neg[j] = j_n;
-
-                    for k in 0..3
-                    {
-                        if k == i || k == j {continue;}
-
-                        comb[k] = 2;
-                        neg[k] = if is_z_neg(comb, neg) {-1} else {1};
-
-                        ret_comb.push(comb);
-                        ret_neg.push(neg);
-
-                    }
-                }
-            }
-        }
-    }
-
-    (ret_comb, ret_neg)
 }
 
 fn parse_input(filename: &str) -> HashMap<u8, Scanner>
@@ -143,6 +55,74 @@ fn parse_input(filename: &str) -> HashMap<u8, Scanner>
     ret
 }
 
+/// check if final z axis should be positive or negative when building configs
+fn is_z_neg(inds: [i8; 3], negs: [i8; 3]) -> bool
+{
+    let mut ret: bool = false;
+
+    let mut x: Vec<i8> = vec![0; 3];
+    let mut y: Vec<i8> = vec![0; 3];
+
+    let xind = inds.iter().position(|&x| x == 0).unwrap() as usize;
+    x[xind] = 1 * negs[xind];
+
+    let yind = inds.iter().position(|&x| x == 1).unwrap() as usize;
+    y[yind] = 1 * negs[yind];
+
+    let wtf: Vec<i8> = Vec::from(x);
+    let wtf2: Vec<i8> = Vec::from(y);
+
+    let z: Vec<i8> = cross_prod(&wtf, &wtf2);
+
+    if z.contains(&-1) {ret = true}
+
+    ret
+}
+
+/// get all possible configurations of 3D axes after rotations
+fn get_all_configs() -> (Vec<[i8; 3]>, Vec<[i8; 3]>)
+{
+
+    let mut ret_comb: Vec<[i8; 3]> = Vec::new();
+    let mut ret_neg: Vec<[i8; 3]> = Vec::new();
+
+    for i in 0..3
+    {
+        let mut comb: [i8; 3] = [0, 0, 0];
+        let mut neg: [i8; 3] = [0, 0, 0];
+
+        for i_n in [-1, 1]
+        {
+            comb[i] = 0;    // place x
+            neg[i] = i_n;
+            for j in 0..3
+            {
+                if j == i {continue;}
+
+                for j_n in [-1, 1]
+                {
+                    comb[j] = 1;    // place y
+                    neg[j] = j_n;
+
+                    for k in 0..3
+                    {
+                        if k == i || k == j {continue;}
+
+                        comb[k] = 2;
+                        neg[k] = if is_z_neg(comb, neg) {-1} else {1};
+
+                        ret_comb.push(comb);
+                        ret_neg.push(neg);
+                    }
+                }
+            }
+        }
+    }
+
+    (ret_comb, ret_neg)
+}
+
+/// check if two scanners have at least 12 matching beacons, return the offset if yes
 fn compare_scanners(scanner1: &Scanner, scanner2: &Scanner) -> Option<[i64; 3]>
 {
 
@@ -190,7 +170,8 @@ fn compare_scanners(scanner1: &Scanner, scanner2: &Scanner) -> Option<[i64; 3]>
     ret
 }
 
-fn convert_scanner(scanner: &Scanner, inds: [i8; 3], negs: [i8; 3]) -> Scanner
+/// create a new scanner with relative beacon distances relative to different axis
+fn create_scanner_with_diff_axis(scanner: &Scanner, inds: [i8; 3], negs: [i8; 3]) -> Scanner
 {
     let mut ret = scanner.clone();
 
@@ -202,12 +183,10 @@ fn convert_scanner(scanner: &Scanner, inds: [i8; 3], negs: [i8; 3]) -> Scanner
         }
     }
 
-    ret.axis = inds;
-    ret.axis_neg = negs;
-
     ret
 }
 
+/// calculate the absolute beacon positions for a scanner
 fn calc_abs_beacons(scanner: &mut Scanner)
 {
 
@@ -227,6 +206,7 @@ fn calc_abs_beacons(scanner: &mut Scanner)
     scanner.beacons_abs = Some(abs_vals);
 }
 
+/// solve problem
 fn solve(inputs: &HashMap<u8, Scanner>) -> (Vec<[i64; 3]>, Vec<[i64; 3]>)
 {
     let mut ret: Vec<[i64; 3]> = Vec::new();
@@ -255,7 +235,7 @@ fn solve(inputs: &HashMap<u8, Scanner>) -> (Vec<[i64; 3]>, Vec<[i64; 3]>)
 
                 for (config, negs) in configs.iter().zip(negs.iter())
                 {
-                    let mut scanner_candidate = convert_scanner(&scanner_rel, *config, *negs);
+                    let mut scanner_candidate = create_scanner_with_diff_axis(&scanner_rel, *config, *negs);
 
                     let offset = compare_scanners(&scanner_abs, &scanner_candidate);
 
@@ -300,6 +280,7 @@ fn solve(inputs: &HashMap<u8, Scanner>) -> (Vec<[i64; 3]>, Vec<[i64; 3]>)
     (ret, ret_scanners)
 }
 
+/// find max manhattan distance between any two beacons
 fn find_max_manhattan_distance(outputs: &Vec<[i64; 3]>) -> i64
 {
     let mut ret: i64 = 0;
