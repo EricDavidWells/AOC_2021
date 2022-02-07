@@ -6,6 +6,7 @@ use std::slice::IterMut;
 use std::iter::Peekable;
 use std::ops::{Add, Mul};
 use std::cmp::{min, max, PartialOrd, Ord, PartialEq, Eq};
+use libaoc::libaoc::{int_to_boolvec, boolvec_to_int};
 
 fn add(x1: u64, x2: u64) -> u64
 {
@@ -79,38 +80,6 @@ fn hex_ascii_to_int(mut hex: u8) -> u8
     {
         panic!("not a proper char");
     }
-}
-
-fn int_to_boolvec(mut hex: u8) -> Vec<bool>
-{
-    let mut ret: Vec<bool> = vec![false; 4];
-
-    let mut ind: usize = 0;
-    while hex > 0
-    {
-        ret[ind] = (hex % 2) == 1;
-        hex /= 2;
-        ind+= 1;
-    }
-
-    ret.reverse();
-    ret
-}
-
-fn boolvec_to_int(mut bvec: &Vec<bool>) -> u64
-{
-    let mut ret: u64 = 0;
-    let mut tmp = bvec.clone();
-    tmp.reverse();
-    for (i, val) in tmp.iter().enumerate()
-    {
-        if *val
-        {
-            ret += (2_u64.pow(i as u32));
-        }
-    }
-    println!("{}", ret);
-    ret
 }
 
 fn vec_from_iter(it: &mut Peekable<IterMut<bool>>, n: usize) -> Vec<bool>

@@ -249,7 +249,7 @@ fn solve(inputs: &HashMap<u8, Scanner>) -> (Vec<[i64; 3]>, Vec<[i64; 3]>)
                         scanner_candidate.scanner_abs_pos = Some(tmp);
                         calc_abs_beacons(&mut scanner_candidate);
 
-                        outputs.insert(*id_rel, scanner_candidate.clone());
+                        outputs.insert(*id_rel, scanner_candidate);
                         inputs_mut.remove(id_rel);
 
                         continue 'outer;

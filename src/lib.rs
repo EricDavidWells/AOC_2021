@@ -115,6 +115,49 @@ pub mod libaoc {
         ret
     }
 
+    pub fn int_to_boolvec(mut hex: u8) -> Vec<bool>
+    {
+        let mut ret: Vec<bool> = vec![false; 4];
+
+        let mut ind: usize = 0;
+        while hex > 0
+        {
+            ret[ind] = (hex % 2) == 1;
+            hex /= 2;
+            ind+= 1;
+        }
+
+        ret.reverse();
+        ret
+    }
+
+    pub fn boolvec_to_int(mut bvec: &Vec<bool>) -> u64
+    {
+        let mut ret: u64 = 0;
+        let mut tmp = bvec.clone();
+        tmp.reverse();
+        for (i, val) in tmp.iter().enumerate()
+        {
+            if *val
+            {
+                ret += (2_u64.pow(i as u32));
+            }
+        }
+        ret
+    }
+
+    pub fn boolvec_from_iter(it: &mut std::slice::Iter<bool>) -> Vec<bool>
+    {
+        let mut ret: Vec<bool> = Vec::new();
+
+        for val in it
+        {
+            ret.push(*val);
+        }
+
+        ret
+    }
+
 }
 
 // mod libaoc;
