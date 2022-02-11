@@ -82,7 +82,7 @@ fn dirac_game(
     p2_count: &mut u64,
     mut p1turn: bool,
     mut count: u8,
-    cheatcodes: &mut HashMap<(u64, u64), (u64, u64)>)
+    cheatcodes: &mut HashMap<(u64, u64, u64, u64), (u64, u64)>)
 {
 
     if count >= 3 {
@@ -111,9 +111,9 @@ fn dirac_game(
 
     if p1turn
     {
-        if cheatcodes.contains_key(&(p1, p1_score)) && count == 0
+        if cheatcodes.contains_key(&(p1, p1_score, p2, p2_score)) && count == 0
         {
-            let (s1, s2) = cheatcodes.get(&(p1, p1_score)).unwrap();
+            let (s1, s2) = cheatcodes.get(&(p1, p1_score, p2, p2_score)).unwrap();
             *p1_count += *s1;
             *p2_count += *s2;
             return;
@@ -131,7 +131,7 @@ fn dirac_game(
 
             if count == 0
             {
-                cheatcodes.insert((p1, p1_score), (*p1_count - p1_count_old, *p2_count - p2_count_old));
+                cheatcodes.insert((p1, p1_score, p2, p2_score), (*p1_count - p1_count_old, *p2_count - p2_count_old));
             }
         }
     }
@@ -150,15 +150,15 @@ fn main()
 {
     let start = Instant::now();
 
-    // let filename = "src/bin/day21/input.txt";
-    let filename = "src/bin/day21/example_input.txt";
+    let filename = "src/bin/day21/input.txt";
+    // let filename = "src/bin/day21/example_input.txt";
 
     let (p1, p2) = parse_input(filename);
     println!("practice game result: {}", practice_game(p1, p2));
 
     let mut p1_count: u64 = 0;
     let mut p2_count: u64 = 0;
-    let mut cheatcodes: HashMap<(u64, u64), (u64, u64)> = HashMap::new();
+    let mut cheatcodes: HashMap<(u64, u64, u64, u64), (u64, u64)> = HashMap::new();
 
     dirac_game(p1, p2, 0, 0, &mut p1_count, &mut p2_count, true, 0, &mut cheatcodes);
 
