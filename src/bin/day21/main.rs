@@ -2,6 +2,7 @@ use std::time::Instant;
 use std::fs;
 use regex::Regex;
 use std::cmp::min;
+use std::collections::HashMap;
 
 struct DeterministicDie
 {
@@ -80,28 +81,11 @@ fn dirac_game(
     p1_count: &mut u64,
     p2_count: &mut u64,
     mut p1turn: bool,
-    mut count: u8)
+    mut count: u8,
+    cheatcodes: &mut HashMap<(u64, u64), (u64, u64)>)
 {
 
-    if p1_score >= 21
-    {
-        if *p1_count % 1E9 as u64 == 0
-        {
-            println!("p1: {}, p2: {}", *p1_count, *p2_count);
-        }
-
-        *p1_count += 1;
-        return;
-    }
-    if p2_score >= 21
-    {
-        *p2_count += 1;
-        return;
-    }
-
-
-
-    if count > 3 {
+    if count >= 3 {
         if p1turn
         {
             p1_score += p1 + 1;
@@ -114,49 +98,51 @@ fn dirac_game(
         count = 0;
     }
 
+    if p1_score >= 21
+    {
+        *p1_count += 1;
+        return;
+    }
+    if p2_score >= 21
+    {
+        *p2_count += 1;
+        return;
+    }
+
     if p1turn
     {
-        dirac_game(update_position(p1, 1), p2,
-                   p1_score, p2_score,
-                   p1_count, p2_count, p1turn, count+1);
-        dirac_game(update_position(p1, 2), p2,
-                   p1_score, p2_score,
-                   p1_count, p2_count, p1turn, count+1);
-        dirac_game(update_position(p1, 3), p2,
-                   p1_score, p2_score,
-                   p1_count, p2_count, p1turn, count+1);
+        if cheatcodes.contains_key(&(p1, p1_score)) && count == 0
+        {
+            let (s1, s2) = cheatcodes.get(&(p1, p1_score)).unwrap();
+            *p1_count += *s1;
+            *p2_count += *s2;
+            return;
+        }
+        else {
+            let p1_count_old = *p1_count;
+            let p2_count_old = *p2_count;
 
-        // dirac_game(update_position(p1, 1), p2,
-        //            p1_score + update_position(p1, 1) + 1, p2_score,
-        //            p1_count, p2_count, p1turn, count+1);
-        // dirac_game(update_position(p1, 2), p2,
-        //            p1_score + update_position(p1, 2) + 1, p2_score,
-        //            p1_count, p2_count, p1turn, count+1);
-        // dirac_game(update_position(p1, 3), p2,
-        //            p1_score + update_position(p1, 3) + 1, p2_score,
-        //            p1_count, p2_count, p1turn, count+1);
+            for i in 1..4
+            {
+                dirac_game(update_position(p1, i), p2,
+                           p1_score, p2_score,
+                           p1_count, p2_count, p1turn, count+1, cheatcodes);
+            }
+
+            if count == 0
+            {
+                cheatcodes.insert((p1, p1_score), (*p1_count - p1_count_old, *p2_count - p2_count_old));
+            }
+        }
     }
     else
     {
-        dirac_game(p1, update_position(p2, 1),
-                   p1_score, p2_score,
-                   p1_count, p2_count, p1turn, count+1);
-        dirac_game(p1, update_position(p2, 2),
-                   p1_score, p2_score,
-                   p1_count, p2_count, p1turn, count+1);
-        dirac_game(p1, update_position(p2, 3),
-                   p1_score, p2_score,
-                   p1_count, p2_count, p1turn, count+1);
-
-        // dirac_game(p1, update_position(p2, 1),
-        //            p1_score, p2_score + update_position(p2, 1) + 1,
-        //            p1_count, p2_count, p1turn, count+1);
-        // dirac_game(p1, update_position(p2, 2),
-        //            p1_score, p2_score + update_position(p2, 2) + 1,
-        //            p1_count, p2_count, p1turn, count+1);
-        // dirac_game(p1, update_position(p2, 3),
-        //            p1_score, p2_score + update_position(p2, 3) + 1,
-        //            p1_count, p2_count, p1turn, count+1);
+        for i in 1..4
+        {
+            dirac_game(p1, update_position(p2, i),
+                       p1_score, p2_score,
+                       p1_count, p2_count, p1turn, count+1, cheatcodes);
+        }
     }
 }
 
@@ -172,7 +158,9 @@ fn main()
 
     let mut p1_count: u64 = 0;
     let mut p2_count: u64 = 0;
-    dirac_game(p1, p2, 0, 0, &mut p1_count, &mut p2_count, true, 0);
+    let mut cheatcodes: HashMap<(u64, u64), (u64, u64)> = HashMap::new();
+
+    dirac_game(p1, p2, 0, 0, &mut p1_count, &mut p2_count, true, 0, &mut cheatcodes);
 
     println!("p1 wins {}, p2 wins {}", p1_count, p2_count);
 
